@@ -14,44 +14,53 @@ import sideImage3 from "../../assets/images/sider_2019_02-04-2.png";
 import styles from "./HomePage.module.css";
 import { withTranslation, WithTranslation } from "react-i18next";
 import axios from "axios";
+import { RootState } from "../../redux/store";
+import { connect } from "react-redux";
+import {
+  fetchRecommendProductStartActionCreator,
+  fetchRecommendProductSuccessActionCreator,
+  fetchRecommendProductFailActionCreator,
+} from "../../redux/recommendProducts/recommendProductsActions";
 
-interface State {
-  loading: boolean,
-  error: string | null,
-  productList: any[]
+const mapStateToProps = (state: RootState) => {
+  return {
+    loading: state.recommendProducts.loading,
+    error: state.recommendProducts.error,
+    productsList: state.recommendProducts.productsList
+  }
 }
 
-class HomePageComponent extends React.Component<WithTranslation, State> {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      error: null,
-      productList: []
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchStart: () => {
+      dispatch(fetchRecommendProductStartActionCreator())
+    },
+    fetchSuccess: (data) => {
+      dispatch(fetchRecommendProductSuccessActionCreator(data))
+    },
+    fetchFail: (err) => {
+      dispatch(fetchRecommendProductFailActionCreator(err))
     }
   }
+}
+
+type PropsType = WithTranslation & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
+
+class HomePageComponent extends React.Component<PropsType> {
 
   async componentDidMount() {
     try {
+      this.props.fetchStart()
       const { data } = await axios.get('http://123.56.149.216:8080/api/productCollections');
-      this.setState({
-        loading: false,
-        error: null,
-        productList: data
-      })
+      this.props.fetchSuccess(data)
     } catch (err) {
-      this.setState({
-        loading: false,
-        error: err.message,
-      })
+      this.props.fetchFail(err.message)
     }
 
   }
 
   render() {
-    const { t } = this.props;
-    const { productList, loading, error } = this.state;
+    const { t, productsList, loading, error } = this.props;
 
     if(loading) {
       return (<Spin
@@ -89,7 +98,7 @@ class HomePageComponent extends React.Component<WithTranslation, State> {
               </Typography.Title>
             }
             sideImage={sideImage}
-            products={productList[0].touristRoutes}
+            products={productsList[0].touristRoutes}
           />
           <ProductCollection
             title={
@@ -98,7 +107,7 @@ class HomePageComponent extends React.Component<WithTranslation, State> {
               </Typography.Title>
             }
             sideImage={sideImage2}
-            products={productList[1].touristRoutes}
+            products={productsList[1].touristRoutes}
           />
           <ProductCollection
             title={
@@ -107,7 +116,7 @@ class HomePageComponent extends React.Component<WithTranslation, State> {
               </Typography.Title>
             }
             sideImage={sideImage3}
-            products={productList[2].touristRoutes}
+            products={productsList[2].touristRoutes}
           />
           <BusinessPartners />
         </div>
@@ -117,4 +126,4 @@ class HomePageComponent extends React.Component<WithTranslation, State> {
   }
 }
 
-export const HomePage = withTranslation()(HomePageComponent)
+export const HomePage = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(HomePageComponent))
