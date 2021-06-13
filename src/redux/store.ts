@@ -1,12 +1,15 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import languageReducer from "./language/languageReducer";
 import recommendProductsReducer from "./recommendProducts/recommendProductsReducer";
 import thunk from "redux-thunk";
 import { actionLog } from "./middlewares/actionLog";
+import { combineReducers } from "@reduxjs/toolkit";
+import { productDetailSlice } from "./productDetail/slice";
 
 const rootReducers = combineReducers({
   language: languageReducer,
-  recommendProducts: recommendProductsReducer
+  recommendProducts: recommendProductsReducer,
+  productDetail: productDetailSlice.reducer
 })
 
 const store = createStore(rootReducers,applyMiddleware(thunk, actionLog));
