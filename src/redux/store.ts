@@ -3,7 +3,7 @@ import languageReducer from "./language/languageReducer";
 import recommendProductsReducer from "./recommendProducts/recommendProductsReducer";
 import thunk from "redux-thunk";
 import { actionLog } from "./middlewares/actionLog";
-import { combineReducers } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { productDetailSlice } from "./productDetail/slice";
 
 const rootReducers = combineReducers({
@@ -12,7 +12,12 @@ const rootReducers = combineReducers({
   productDetail: productDetailSlice.reducer
 })
 
-const store = createStore(rootReducers,applyMiddleware(thunk, actionLog));
+// const store = createStore(rootReducers,applyMiddleware(thunk, actionLog));
+const store = configureStore({
+  reducer: rootReducers,
+  middleware: (getDefaultMiddleware) => [...getDefaultMiddleware(), actionLog],
+  devTools: true,
+})
 
 export type RootState = ReturnType<typeof store.getState>;
 
