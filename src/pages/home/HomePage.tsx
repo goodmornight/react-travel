@@ -13,7 +13,6 @@ import sideImage2 from "../../assets/images/sider_2019_02-04.png";
 import sideImage3 from "../../assets/images/sider_2019_02-04-2.png";
 import styles from "./HomePage.module.css";
 import { withTranslation, WithTranslation } from "react-i18next";
-import axios from "axios";
 import { RootState } from "../../redux/store";
 import { connect } from "react-redux";
 import {
@@ -40,7 +39,7 @@ type PropsType = WithTranslation & ReturnType<typeof mapStateToProps> & ReturnTy
 
 class HomePageComponent extends React.Component<PropsType> {
 
-  async componentDidMount() {
+  componentDidMount() {
     this.props.giveMeData();
   }
 
