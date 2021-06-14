@@ -1,7 +1,6 @@
 import React from "react";
+import { MainLayout } from "../../layouts/mainLayout";
 import {
-  Header,
-  Footer,
   Carousel,
   SideMenu,
   ProductCollection,
@@ -46,7 +45,7 @@ class HomePageComponent extends React.Component<PropsType> {
   render() {
     const { t, productsList, loading, error } = this.props;
 
-    if(loading) {
+    if (loading) {
       return (<Spin
         size="large"
         style={{
@@ -59,53 +58,49 @@ class HomePageComponent extends React.Component<PropsType> {
       />)
     }
 
-    if(error) {
+    if (error) {
       return <div>网站出错：{error}</div>;
     }
 
     return (
-      <>
-        <Header />
-        <div className={styles["page-content"]}>
-          <Row style={{ marginTop: 20 }}>
-            <Col span={6}>
-              <SideMenu />
-            </Col>
-            <Col span={18}>
-              <Carousel />
-            </Col>
-          </Row>
-          <ProductCollection
-            title={
-              <Typography.Title level={3} type="warning">
-                {t("home_page.hot_recommended")}
-              </Typography.Title>
-            }
-            sideImage={sideImage}
-            products={productsList[0].touristRoutes}
-          />
-          <ProductCollection
-            title={
-              <Typography.Title level={3} type="danger">
-                {t("home_page.new_arrival")}
-              </Typography.Title>
-            }
-            sideImage={sideImage2}
-            products={productsList[1].touristRoutes}
-          />
-          <ProductCollection
-            title={
-              <Typography.Title level={3} type="success">
-                {t("home_page.domestic_travel")}
-              </Typography.Title>
-            }
-            sideImage={sideImage3}
-            products={productsList[2].touristRoutes}
-          />
-          <BusinessPartners />
-        </div>
-        <Footer />
-      </>
+      <MainLayout>
+        <Row style={{ marginTop: 20 }}>
+          <Col span={6}>
+            <SideMenu />
+          </Col>
+          <Col span={18}>
+            <Carousel />
+          </Col>
+        </Row>
+        <ProductCollection
+          title={
+            <Typography.Title level={3} type="warning">
+              {t("home_page.hot_recommended")}
+            </Typography.Title>
+          }
+          sideImage={sideImage}
+          products={productsList[0].touristRoutes}
+        />
+        <ProductCollection
+          title={
+            <Typography.Title level={3} type="danger">
+              {t("home_page.new_arrival")}
+            </Typography.Title>
+          }
+          sideImage={sideImage2}
+          products={productsList[1].touristRoutes}
+        />
+        <ProductCollection
+          title={
+            <Typography.Title level={3} type="success">
+              {t("home_page.domestic_travel")}
+            </Typography.Title>
+          }
+          sideImage={sideImage3}
+          products={productsList[2].touristRoutes}
+        />
+        <BusinessPartners />
+      </MainLayout>
     );
   }
 }
