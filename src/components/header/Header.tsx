@@ -37,9 +37,8 @@ export const Header = () => {
   }, [jwt])
 
   const onLogout = () => {
-    dispatch(userSlice.actions.logOut())
-    history.push("/")
-    window.location.reload(false) // 可加可不加
+    dispatch(userSlice.actions.logOut());
+    history.push("/");
   }
 
   const menuClickHandler = (e) => {
