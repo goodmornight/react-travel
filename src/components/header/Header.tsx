@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import logo from '../../assets/logo.svg';
+import React, { useState, useEffect } from "react";
 import styles from "./Header.module.css";
+import logo from "../../assets/logo.svg";
 import { Layout, Typography, Input, Menu, Button, Dropdown } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
-import { useSelector } from '../../redux/hooks';
+import {
+  useHistory,
+  useLocation,
+  useParams,
+  useRouteMatch,
+} from "react-router-dom";
+import { useSelector } from "../../redux/hooks";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { Dispatch } from "redux";
 import {
   LanguageActionTypes,
   addLanguageActionCreator,
   changeLanguageActionCreator,
 } from "../../redux/language/languageActions";
+import { useTranslation } from "react-i18next";
 import jwt_decode, { JwtPayload as DefaultJwtPayload } from "jwt-decode";
 import { userSlice } from "../../redux/user/slice";
 
@@ -19,15 +25,22 @@ interface JwtPayload extends DefaultJwtPayload {
   username: string
 }
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const history = useHistory();
+  const location = useLocation();
+  const params = useParams();
+  const match = useRouteMatch();
   const language = useSelector((state) => state.language.language);
   const languageList = useSelector((state) => state.language.languageList);
   const dispatch = useDispatch();
+  // const dispatch = useDispatch<Dispatch<LanguageActionTypes>>();
   const { t } = useTranslation();
 
   const jwt = useSelector(s => s.user.token)
   const [username, setUsername] = useState("")
+
+  const shoppingCartItems = useSelector(s => s.shoppingCart.items)
+  const shoppingCartLoading = useSelector(s => s.shoppingCart.loading)
 
   useEffect(()=>{
     if(jwt){
@@ -35,11 +48,6 @@ export const Header = () => {
       setUsername(token.username)
     }
   }, [jwt])
-
-  const onLogout = () => {
-    dispatch(userSlice.actions.logOut());
-    history.push("/");
-  }
 
   const menuClickHandler = (e) => {
     console.log(e);
@@ -50,6 +58,11 @@ export const Header = () => {
       dispatch(changeLanguageActionCreator(e.key));
     }
   };
+
+  const onLogout = () => {
+    dispatch(userSlice.actions.logOut())
+    history.push("/")
+  }
 
   return (
     <div className={styles["app-header"]}>
@@ -79,7 +92,12 @@ export const Header = () => {
                 {t("header.welcome")}
                 <Typography.Text strong>{username}</Typography.Text>
               </span>
-              <Button onClick={() => history.push('/shoppingCart')}>{t("header.shoppingCart")}</Button>
+              <Button
+                loading={shoppingCartLoading}
+                onClick={() => history.push("/shoppingCart")}
+              >
+                {t("header.shoppingCart")}({shoppingCartItems.length})
+              </Button>
               <Button onClick={onLogout}>{t("header.signOut")}</Button>
             </Button.Group>
           ) : (
@@ -127,4 +145,4 @@ export const Header = () => {
       </Menu>
     </div>
   );
-}
+};

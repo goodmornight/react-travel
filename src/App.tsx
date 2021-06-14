@@ -1,23 +1,40 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import styles from "./App.module.css";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { HomePage, SignInPage, RegisterPage, DetailPage, SearchPage, ShoppingCartPage } from "./pages";
-import { Redirect } from 'react-router';
+import {
+  HomePage,
+  SignInPage,
+  RegisterPage,
+  DetailPage,
+  SearchPage,
+  ShoppingCartPage,
+} from "./pages";
+import { Redirect } from "react-router-dom";
 import { useSelector } from "./redux/hooks";
+import { useDispatch } from "react-redux";
+import { getShoppingCart } from "./redux/shoppingCart/slice";
 
 const PrivateRoute = ({ component, isAuthenticated, ...rest }) => {
   const routeComponent = (props) => {
     return isAuthenticated ? (
       React.createElement(component, props)
     ) : (
-      <Redirect to={{pathname: "/signIn"}} />
-    )
+      <Redirect to={{ pathname: "/signIn" }} />
+    ); 
   }
-  return <Route render={routeComponent} {...rest} />
+  return <Route render={routeComponent} {...rest} />;
 }
 
 function App() {
   const jwt = useSelector((s) => s.user.token);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (jwt) {
+      dispatch(getShoppingCart(jwt));
+    }
+  }, [jwt]);
+
   return (
     <div className={styles.App}>
       <BrowserRouter>
@@ -32,7 +49,7 @@ function App() {
             path="/shoppingCart"
             component={ShoppingCartPage}
           />
-          <Route render={() => <h1>404 not found</h1>} />
+          <Route render={() => <h1>404 not found 页面去火星了 ！</h1>} />
         </Switch>
       </BrowserRouter>
     </div>
